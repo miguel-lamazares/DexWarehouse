@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
-                window.location.href = "https://github.com/miguel-lamazares/DexWarehouse/tree/main";
+                window.location.href = "/dashboard/dashboard.html";
             } else {
                 const errorText = await response.text();
                 showError(errorText || "Falha no login. Verifique suas credenciais.");

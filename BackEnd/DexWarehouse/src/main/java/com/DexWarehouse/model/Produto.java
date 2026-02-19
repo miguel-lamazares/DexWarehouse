@@ -1,17 +1,10 @@
+// Produto.java
 package com.DexWarehouse.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
-import java.time.LocalDate;
 import java.util.Map;
-
-class Lote {
-    private String idLote;
-    private int quantidade;
-    private LocalDate dataValidade;
-    private String sabor; // ou característica
-}
 
 @Document(collection = "produtos")
 public class Produto {
@@ -19,12 +12,29 @@ public class Produto {
     private String id;
     private String nome;
     private String descricao;
-    private String fotoUrl; // link para a imagem
-    private List<Lote> lotes; // lista de lotes associados
-    private List<String> caracteristicas; // ex: sabores
-    private Map<String, Integer> insumosPorUnidade; // ex: {"tampa":1, "garrafa":1, "rotulo":1}
+    private String fotoUrl;
+    private List<Lote> lotes;
+    private Map<String, Integer> insumosPorUnidade; // ex: {"garrafa":1, "tampa":1, "rotulo":1}
+
+    public Produto() {}
+
+    public Produto(String nome, String descricao, String fotoUrl, Map<String,Integer> insumosPorUnidade) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.fotoUrl = fotoUrl;
+        this.insumosPorUnidade = insumosPorUnidade;
+    }
+
+    // Getters e setters
+    public String getId() { return id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
+    public List<Lote> getLotes() { return lotes; }
+    public void setLotes(List<Lote> lotes) { this.lotes = lotes; }
+    public Map<String, Integer> getInsumosPorUnidade() { return insumosPorUnidade; }
+    public void setInsumosPorUnidade(Map<String, Integer> insumosPorUnidade) { this.insumosPorUnidade = insumosPorUnidade; }
 }
-
-
-
-
