@@ -5,7 +5,7 @@ import com.DexWarehouse.dto.LoginResponse;
 import com.DexWarehouse.model.User;
 import com.DexWarehouse.repository.UserRepository;
 import com.DexWarehouse.security.JwtService;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +16,9 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
 
+    @Value("${app.security.pepper}")
+    String pepper;
+
     public AuthService(
         UserRepository repo,
         PasswordEncoder encoder,
@@ -25,10 +28,9 @@ public class AuthService {
         this.encoder = encoder;
         this.jwtService = jwtService;
     }
-
+    
     public LoginResponse login(LoginRequest dto) {
-
-        String pepper = System.getenv("PASSWORD_PEPPER");
+        
 
         User user = userRepository.findByUsername(dto.username())
             .orElseThrow(() -> new RuntimeException("Usuário inválido"));

@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
-                window.location.href = "/admin";
+                window.location.href = "/dashboard";
             } else {
                 const errorText = await response.text();
                 showError(errorText || "Falha no login. Verifique suas credenciais.");

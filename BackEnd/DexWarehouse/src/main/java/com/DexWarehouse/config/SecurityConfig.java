@@ -37,19 +37,23 @@ public class SecurityConfig {
 
 
 @Bean
-SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
+public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/api/auth/**", "/login", "/admin", "/css/**", "/js/**", "/img/**").permitAll()
+            // Públicos: Login e arquivos de estilo/script
+            .requestMatchers("/login", "/api/auth/**", "/css/**", "/js/**", "/img/**", "/scss/**", "/lib/**").permitAll()
+            // Privados: Dashboard e qualquer outra rota do sistema
+            .requestMatchers("/dashboard/**", "/api/produtos/**").permitAll()
             .anyRequest().authenticated()
         )
-        .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        // Se não estiver logado, manda de volta pro login
+        .formLogin(login -> login.loginPage("/login").permitAll())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
-    }
+}
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
