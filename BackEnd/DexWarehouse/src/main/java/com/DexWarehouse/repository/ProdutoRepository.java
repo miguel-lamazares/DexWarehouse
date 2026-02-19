@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProdutoRepository extends MongoRepository<Produto, String> {
-    // O Spring Mongo já te dá save, findAll e deleteById pronto.
+    
 }
