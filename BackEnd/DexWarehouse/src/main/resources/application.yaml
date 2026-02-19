@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: DexWarehouse
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: loginRateLimit
+      url: /api/auth/login
+      rate-limits:
+        - bandwidths:
+            - capacity: 5
+              time: 15
+              unit: minutes
+
+app:
+  jwt:
+    secret: 8350e5a3e24c153df2275c9f80692773
+    expiration: 86400000
