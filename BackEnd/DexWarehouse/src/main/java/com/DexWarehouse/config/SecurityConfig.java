@@ -22,8 +22,6 @@ import com.DexWarehouse.security.JwtAuthenticationFilter;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
-
-
 @Configuration
 public class SecurityConfig {
 
@@ -35,25 +33,30 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(12);
     }
 
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {
+                })
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+    .requestMatchers(
+        "/",
+        "/login",
+        "/dashboard/**",
+        "/css/**",
+        "/js/**",
+        "/img/**"
+    ).permitAll()
 
-@Bean
-public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            // Públicos: Login e arquivos de estilo/script
-            .requestMatchers("/login", "/api/auth/**", "/css/**", "/js/**", "/img/**", "/scss/**", "/lib/**").permitAll()
-            // Privados: Dashboard e qualquer outra rota do sistema
-            .requestMatchers("/dashboard/**", "/api/produtos/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        // Se não estiver logado, manda de volta pro login
-        .formLogin(login -> login.loginPage("/login").permitAll())
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+    .requestMatchers("/api/**").authenticated()
 
-    return http.build();
-}
+    .anyRequest().permitAll()
+);
+
+        return http.build();
+    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -62,20 +65,19 @@ public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilte
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-
     public String extractUsername(String token) {
-    return Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
+        return Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
